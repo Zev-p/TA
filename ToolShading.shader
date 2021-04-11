@@ -125,8 +125,16 @@ Shader "Unity Shaders Book/Chapter 14/Toon Shading" {
 				fixed3 diffuse = _LightColor0.rgb * albedo * tex2D(_Ramp, float2(diff, diff)).rgb;
 				
 				fixed spec = dot(worldNormal, worldHalfDir); 
-				fixed w = fwidth(spec) * 2.0; // fwidth(x) return:abs(ddx(x))+abs(ddy(x)) 高光是向周围不断衰减的，而且是看视线方向和法线方向的关系，
+				fixed w = fwidth(spec) * 2.0; 
+				// fwidth(x) return:abs(ddx(x))+abs(ddy(x)) 高光是向周围不断衰减的，而且是看视线方向和法线方向的关系。
+				片元着色器是对一个像素做处理，这里的处理就是：看相邻的像素，n*v的乘积变化多少。（通常变化的很小，因为高光会覆盖很多像素）
+				*2大概是上下左右四个变化量相加作为判断区间。（实际的高光情况）
+				
 				fixed3 specular = _Specular.rgb * lerp(0, 1, smoothstep(-w, w, spec + _SpecularScale - 1)) * step(0.0001, _SpecularScale);
+				//smoothstep的用来做有灰度变化的高光。这里的参数是判断区间，和我们想要的高光大小.
+				//step是和参考值比，小于就返回0，大于返回1.用来满足需求：_SpecularScale为0的时候无高光。
+			      
+				
 				
 				return fixed4(ambient + diffuse + specular, 1.0);
 			}
