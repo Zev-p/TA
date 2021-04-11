@@ -124,8 +124,8 @@ Shader "Unity Shaders Book/Chapter 14/Toon Shading" {
 				
 				fixed3 diffuse = _LightColor0.rgb * albedo * tex2D(_Ramp, float2(diff, diff)).rgb;
 				
-				fixed spec = dot(worldNormal, worldHalfDir); //[-1,1]
-				fixed w = fwidth(spec) * 2.0; // fwidth(x) return:abs(ddx(x))+abs(ddy(x))
+				fixed spec = dot(worldNormal, worldHalfDir); 
+				fixed w = fwidth(spec) * 2.0; // fwidth(x) return:abs(ddx(x))+abs(ddy(x)) 高光是向周围不断衰减的，而且是看视线方向和法线方向的关系，
 				fixed3 specular = _Specular.rgb * lerp(0, 1, smoothstep(-w, w, spec + _SpecularScale - 1)) * step(0.0001, _SpecularScale);
 				
 				return fixed4(ambient + diffuse + specular, 1.0);
